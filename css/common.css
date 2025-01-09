@@ -1,0 +1,17 @@
+@import "/css/header.css";
+@import "/css/footer.css";
+
+*, :after, :before {
+    box-sizing:border-box
+}
+
+li {
+    list-style-type:none
+}
+
+
+body {
+    display: grid;
+    width: 100%;
+    margin: 0;
+}
