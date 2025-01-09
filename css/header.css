@@ -3,11 +3,18 @@ header {
 	width: 100%;
 	display: flex;
 	position: sticky;
-	top: 0px;
+	top: 0;
 	align-items: center;
 	border-bottom: 1px solid var(--border-color);
 	background-color: var(--hearder-background);
 	justify-content: space-between;
+}
+
+.header-wrapper {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
 }
 
 header img {
@@ -17,14 +24,12 @@ header img {
 }
 
 header nav {
+	display: flex;
 	height: 100%;
 }
 
 header ul {
-	display: flex;
 	height: 100%;
-	align-items: center;
-	justify-content: center;
 }
 
 header ul li {
