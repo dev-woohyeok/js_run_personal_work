@@ -1,3 +1,12 @@
-@import "/css/common.css";
+@import '/css/common.css'; /* 공통 스타일 */
+@import '/css/search.css'; /* 검색 관련 스타일 */
+@import '/css/dialog.css'; /* 다이얼로그 관련 스타일 */
+@import '/css/cards.css'; /* 카드 관련 스타일 */
 
-
+main {
+	display: grid;
+	width: 100%;
+	height: 100%;
+	grid-template-columns: 1fr;
+	grid-template-rows: 100px 1fr;
+}

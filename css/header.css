@@ -1,0 +1,41 @@
+header {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid var(--border-color);
+	justify-content: space-between;
+}
+
+header img {
+	margin: 0 20px;
+	width: 300px;
+	height: 40px;
+}
+
+header nav {
+	height: 100%;
+}
+
+header ul {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+header ul li {
+	margin: 0 2rem;
+}
+
+.btn-nav {
+	border: none;
+	background-color: var(--button-main-background);
+	color: var(--button-main-text);
+	font-size: 1rem;
+}
+
+.btn-nav:hover {
+	cursor: pointer;
+	color: var(--button-secondary-text);
+}

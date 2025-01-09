@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,17 +8,104 @@
     <script src="/js/home.js" type="module"></script>
     <title>Document</title>
 </head>
+
 <body>
     <header>
-        <div>로고</div>
+        <img class="logo" src="/image/logo.png" alt="">
         <nav>
-            <li></li>
-            <li></li>
-            <li></li>
+            <ul>
+                <li><button class="btn-nav" type="menu">북마크 보기</button></li>
+            </ul>
         </nav>
     </header>
-    <main>녕</main>
-    <footer>하</footer>
-</body>
-</html>
+    <main>
+        <!-- 검색 컨테이너 -->
+        <section class="search-container">
+            <div class="search-input">
+                <input id="search-field" class="search-field" type="text" placeholder="영화를 검색하세요" maxlength="50">
+                <div class="search-icon">
+                    <svg fill="#000000" viewBox="0 0 24 24" id="search" data-name="Line Color"
+                        xmlns="http://www.w3.org/2000/svg" class="icon line-color">
+                        <line id="secondary" x1="21" y1="21" x2="15" y2="15"
+                            style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                        </line>
+                        <circle id="primary" cx="10" cy="10" r="7"
+                            style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;">
+                        </circle>
+                    </svg>
+                </div>
+                <button class="search-reset hidden" type="button">
+                    <svg fill="#000000" viewBox="0 0 256 256" id="Flat" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M128,20.00012a108,108,0,1,0,108,108A108.12217,108.12217,0,0,0,128,20.00012Zm0,192a84,84,0,1,1,84-84A84.0953,84.0953,0,0,1,128,212.00012Zm40.48535-107.51465L144.9707,128.00012l23.51465,23.51465a12.0001,12.0001,0,0,1-16.9707,16.9707L128,144.97082l-23.51465,23.51465a12.0001,12.0001,0,0,1-16.9707-16.9707l23.51465-23.51465L87.51465,104.48547a12.0001,12.0001,0,0,1,16.9707-16.9707L128,111.02942l23.51465-23.51465a12.0001,12.0001,0,0,1,16.9707,16.9707Z" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+        <!-- 카드 컨테이너 -->
+        <section class="cards-container">
+            <div class="card-container">
+                <img class="card-img" src="https://image.tmdb.org/t/p/w300/euYIwmwkmz95mnXvufEmbL6ovhZ.jpg" alt="">
+                <div class="card-body">
+                    <div class="card-title">글레디에이터2</div>
+                    <div class="card-genres">
+                        <div class="card-genre">액션</div>
+                        <div class="card-genre">성인</div>
+                    </div>
+                    <div class="card-score">
+                        평점 :<span class="card-score-field">7.42</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-container">
+                <img class="card-img" src="https://image.tmdb.org/t/p/w300/euYIwmwkmz95mnXvufEmbL6ovhZ.jpg" alt="">
+                <div class="card-body">
+                    <div class="card-title">글레디에이터2</div>
+                    <div class="card-genres">
+                        <div class="card-genre">액션</div>
+                        <div class="card-genre">성인</div>
+                    </div>
+                    <div class="card-score">
+                        평점 : <span class="score-field">7.42</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-container">
+                <div class="card-img">카드</div>
+                <div class="card-title"></div>
+                <div class="card-genres"></div>
+                <div class="card-score"></div>
+            </div>
+            <div class="card-container">
+                <div class="card-img">카드</div>
+                <div class="card-title"></div>
+                <div class="card-genres"></div>
+                <div class="card-score"></div>
+            </div>
+            <div class="card-container">
+                <div class="card-img">카드</div>
+                <div class="card-title"></div>
+                <div class="card-genres"></div>
+                <div class="card-score"></div>
+            </div>
+            <div class="card-container">
+                <div class="card-img">카드</div>
+                <div class="card-title"></div>
+                <div class="card-genres"></div>
+                <div class="card-score"></div>
+            </div>
+            <div class="card-container">
+                <div class="card-img">카드</div>
+                <div class="card-title"></div>
+                <div class="card-genres"></div>
+                <div class="card-score"></div>
+            </div>
+        </section>
+    </main>
+    <footer></footer>
+    <dialog class="container-modal">
 
+    </dialog>
+</body>
+
+</html>

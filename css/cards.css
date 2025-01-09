@@ -1,0 +1,69 @@
+.cards-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 2.5rem;
+	padding: 3rem;
+	overflow-y: auto;
+}
+
+.card-container {
+	width: 300px;
+	height: 500px;
+	cursor: pointer;
+	border-radius: 10px;
+	color: black;
+	box-shadow: -10px -10px 30px 4px rgba(0, 0, 0, 0.1),
+		10px 10px 30px 4px rgba(45, 78, 255, 0.15);
+}
+
+.card-img {
+	width: 100%;
+	height: 320px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+.card-body {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+	justify-content: left;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.card-title {
+	font-size: 1.5rem;
+	font-weight: bolder;
+}
+
+.card-genres {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.card-genre {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid var(--border-color);
+	background-color: var(--genre-color);
+	padding: 0.4rem 0.7rem;
+	border-radius: 25px;
+	color: white;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.card-score {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.card-score-field {
+	margin-left: 5px;
+}

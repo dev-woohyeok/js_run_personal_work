@@ -7,7 +7,12 @@ const DEFAULT_HEADERS = {
 	Authorization: `Bearer ${API_TOKEN}`,
 };
 
-// API 호출 함수
+/**
+ *
+ * @param {string} endpoint : API 엔드포인트
+ * @param {object} options : fetch API 추가할 옵션들
+ * @returns
+ */
 const fetchData = async (endpoint, options = {}) => {
 	try {
 		const response = await fetch(`${BASE_URL}${endpoint}`, {

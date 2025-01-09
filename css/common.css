@@ -1,17 +1,58 @@
-@import "/css/header.css";
-@import "/css/footer.css";
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Sunflower:wght@300&display=swap');
+@import '/css/header.css';
+@import '/css/footer.css';
 
-*, :after, :before {
-    box-sizing:border-box
+:root {
+	--button-main-text: #626262;
+	--button-secondary-text: #000;
+	--button-main-background: #00000000;
+	--border-color: rgba(243, 236, 236, 0.777);
+	--search-background: white;
+	--genre-color: #8c8c8c;
+}
+
+.hidden {
+	display: none;
+}
+
+.invisible {
+	visibility: hidden;
+}
+
+*,
+:after,
+:before {
+	box-sizing: border-box;
+	font-family: 'Gowun Dodum', serif;
+	font-weight: 400;
+	font-style: normal;
+}
+
+ul {
+	margin-block-end: 0;
+	margin-block-start: 0;
+	padding-inline-start: 0;
 }
 
 li {
-    list-style-type:none
+	list-style-type: none;
 }
 
+button {
+	padding-block: 0;
+	padding-inline: 0;
+}
 
 body {
-    display: grid;
-    width: 100%;
-    margin: 0;
+	display: grid;
+	width: 100vw;
+	height: 100vh;
+	grid-template-rows: 100px 1fr 0;
+	grid-template-columns: 1fr;
+	margin: 0;
+}
+
+.svg {
+	width: 100%;
+	height: 100%;
 }
