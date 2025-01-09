@@ -2,8 +2,11 @@ header {
 	height: 100%;
 	width: 100%;
 	display: flex;
+	position: sticky;
+	top: 0px;
 	align-items: center;
 	border-bottom: 1px solid var(--border-color);
+	background-color: var(--hearder-background);
 	justify-content: space-between;
 }
 
