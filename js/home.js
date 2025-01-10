@@ -1,4 +1,4 @@
-import { getMovies } from './api.js';
+import { getMovieDetails, getMovies } from './api.js';
 import { debounce } from './common.js';
 
 let data = {
@@ -347,26 +347,191 @@ let data = {
 	],
 	total_pages: 48066,
 	total_results: 961305,
-};
+}; // 테스트용 더미
+
+let detailData = {
+	adult: false,
+	backdrop_path: '/4qCqAdHcNKeAHcK8tJ8wNJZa9cx.jpg',
+	belongs_to_collection: {
+		id: 10,
+		name: '스타워즈 시리즈',
+		poster_path: '/aSrMJYmQX8kpF26LijkCsYhBMvm.jpg',
+		backdrop_path: '/zZDkgOmFMVYpGAkR9Tkxw0CRnxX.jpg',
+	},
+	budget: 11000000,
+	genres: [
+		{
+			id: 12,
+			name: '모험',
+		},
+		{
+			id: 28,
+			name: '액션',
+		},
+		{
+			id: 878,
+			name: 'SF',
+		},
+	],
+	homepage: '',
+	id: 11,
+	imdb_id: 'tt0076759',
+	origin_country: ['US'],
+	original_language: 'en',
+	original_title: 'Star Wars',
+	overview:
+		'공화국이 붕괴하고 제국이 수립된 뒤 20년, 제다이 기사단은 전멸하고 강력한 제국군의 횡포에 은하계는 공포에 휩싸여 있다. 그러던 중 공화국 재건을 노리는 반란군이 제국군의 비밀병기 데스스타 설계도를 훔쳐 달아나고 제국군은 이를 쫓는다. 하지만 결국 제국의 손에 붙잡히게 된 그들은 드로이드 R2-D2에 설계도를 넣어서 R2의 친구 C-3PO와 탈출시키는 데 성공하고, 두 드로이드 콤비는 타투인의 시골 마을에서 숙부와 함께 살고 있던 청년 루크 스카이워커에게 오게 되는데...',
+	popularity: 113.558,
+	poster_path: '/7XFfURIFCJxN1mfBg0SAjk5yGzg.jpg',
+	production_companies: [
+		{
+			id: 1,
+			logo_path: '/tlVSws0RvvtPBwViUyOFAO0vcQS.png',
+			name: 'Lucasfilm Ltd.',
+			origin_country: 'US',
+		},
+		{
+			id: 25,
+			logo_path: '/qZCc1lty5FzX30aOCVRBLzaVmcp.png',
+			name: '20th Century Fox',
+			origin_country: 'US',
+		},
+	],
+	production_countries: [
+		{
+			iso_3166_1: 'US',
+			name: 'United States of America',
+		},
+	],
+	release_date: '1977-05-25',
+	revenue: 775398007,
+	runtime: 121,
+	spoken_languages: [
+		{
+			english_name: 'English',
+			iso_639_1: 'en',
+			name: 'English',
+		},
+	],
+	status: 'Released',
+	tagline: '아주 오래 전 멀고 먼 은하계에서...',
+	title: '스타워즈 에피소드 4: 새로운 희망',
+	video: false,
+	vote_average: 8.205,
+	vote_count: 20755,
+}; // 테스트용 더미
 
 let movieList = [];
-movieList = data.results;
+// movieList = data.results;
 init();
 
 /**
  * 초기 화면을 구성하는 함수
  */
 async function init() {
+	// API를 통해 인기 영화 목록 가져오기
 	try {
-		// API를 통해 인기 영화 목록 가져오기
-		// const movies = await getMovies();
-		// movieList = movies.results;
+		const movies = await getMovies();
+		movieList = movies.results;
 
 		// 영화 목록 렌더링
-		renderMovies(movieList);
+		renderMovies([...movieList]);
 	} catch (error) {
-		console.error(`초기화 중 오류 발생: ${error}`);
+		console.error(error);
 	}
+
+	const $header = document.querySelector('header');
+	const $cardsContainer = document.querySelector('.cards-container');
+	const $dialog = document.querySelector('.modal-background');
+
+	const $searchInput = document.querySelector('.search-input');
+	const $resetBtn = document.querySelector('.search-reset');
+	const $modalPoster = document.querySelector('.modal-img');
+	const $star = document.querySelector('.star');
+	const $starFill = document.querySelector('.star-fill');
+
+	// 검색 기능
+	$header.addEventListener('input', (e) => {
+		if (e.target.matches('#search-input')) {
+			debounce(handleSearchInput(e), 300);
+			toggleResetButton(e, $resetBtn);
+		}
+	});
+
+	$header.addEventListener('click', (e) => {
+		if (e.target.closest('.search-reset')) {
+			resetSearch(e, $searchInput);
+		}
+	});
+
+	// 영화 카드 클릭 시 상세 정보 모달 렌더링
+	$cardsContainer.addEventListener('click', (e) =>
+		handleCardClick(e, $dialog, $modalPoster),
+	);
+
+	// 모달 관련 이벤트
+	$dialog.addEventListener('click', (e) => {
+		if (e.target.matches('.modal-background')) {
+			// 모달창 배경 클릭 시 모달창 닫기
+			handleModalClose(e, $dialog);
+		}
+
+		if (e.target.closest('.modal-btn-bookmark')) {
+			// 북마크 버튼 클릭 시 북마크 추가)
+			handleBookmark($dialog, $star, $starFill);
+		}
+	});
+}
+
+/**
+ *
+ * @param {Element} $dialog
+ * @param {Element} $star
+ * @param {Element} $starFill
+ */
+function handleBookmark($dialog, $star, $starFill) {
+	const id = $dialog.querySelector('.modal-container').dataset.id;
+	const isBookmarked = checkIsBookmarked(id);
+	updateBookmarkData(isBookmarked);
+	renderBookmark($star, $starFill, isBookmarked);
+}
+
+/**
+ * 북마크 상태를 업데이트하는 함수
+ * @param {boolean} isBookmarked - 북마크 상태
+ */
+function updateBookmarkData(isBookmarked) {
+	if (isBookmarked) {
+		// 북마크 제거
+		setData(
+			'bookmarks',
+			getData('bookmarks').filter((item) => item !== id),
+		);
+	} else {
+		// 북마크 추가
+		setData('bookmarks', [...getData('bookmarks'), id]);
+	}
+}
+
+/**
+ * 북마크 상태에 따라 UI를 업데이트하는 함수
+ * @param {Element} $star - 별표 비어있는 상태
+ * @param {Element} $starFill - 별표 채워진 상태
+ * @param {boolean} isBookmarked - 북마크 상태
+ */
+function renderBookmark($star, $starFill, isBookmarked) {
+	if (isBookmarked) {
+		$star.classList.remove('hidden');
+		$starFill.classList.add('hidden');
+	} else {
+		$star.classList.add('hidden');
+		$starFill.classList.remove('hidden');
+	}
+}
+
+function checkIsBookmarked(id) {
+	const data = getData('bookmarks');
+	return data.some((item) => item === id);
 }
 
 /**
@@ -388,13 +553,7 @@ function renderMovies(movies) {
 
 	// 영화 데이터로 카드 생성
 	movies.forEach((movie) => {
-		const card = createCardElement(
-			movie.id,
-			movie.title,
-			movie.vote_average,
-			movie.poster_path,
-			movie.genre_ids,
-		);
+		const card = createCardElement({ ...movie });
 		cardsContainer.appendChild(card);
 	});
 }
@@ -403,28 +562,34 @@ function renderMovies(movies) {
  * 개별 영화 카드 엘리먼트를 생성하는 함수
  * @param {number} id 영화 ID
  * @param {string} title 영화 제목
- * @param {number} voteAverage 평점
- * @param {string} posterPath 포스터 경로
+ * @param {number} vote_average 평점
+ * @param {string} poster_path 포스터 경로
  * @param {Array} genreIds 장르 ID 배열
  * @returns {HTMLElement} 영화 카드 엘리먼트
  */
-function createCardElement(id, title, voteAverage, posterPath, genreIds) {
+function createCardElement({
+	id,
+	title,
+	vote_average,
+	poster_path,
+	genre_ids,
+}) {
 	const cardContainer = document.createElement('div');
 	cardContainer.dataset.id = id;
 	cardContainer.classList.add('card-container');
 
 	// 장르 엘리먼트 생성
-	const genresElement = createGenresElement(genreIds);
+	const genresElement = createGenresElement(genre_ids);
 
 	cardContainer.innerHTML = `
-        <img class="card-img" src="https://image.tmdb.org/t/p/w300/${posterPath}" alt="${title}">
+        <img class="card-img" src="https://image.tmdb.org/t/p/w300/${poster_path}" alt="${title}">
         <div class="card-body">
             <div class="card-title style="font-size : ${
-				title.length > 12 ? '1rem' : 'inherit'
+				title.length > 10 ? '1rem' : 'inherit'
 			}">${title}</div>
             <div class="card-genres">${genresElement}</div>
             <div class="card-score">
-                평점 : <span class="card-score-field">${voteAverage.toFixed(
+                평점 : <span class="card-score-field">${vote_average.toFixed(
 					1,
 				)}</span>
             </div>
@@ -467,21 +632,136 @@ function createGenresElement(genreIds) {
 		.join('');
 }
 
-// input onChange 리스너 => debounce 설정 , 검색
-// reset 버튼
-
-const searchInput = document.querySelector('#search-input');
-searchInput.addEventListener('input', debounce(handleSearch, 300));
 /**
- * 검색어로 영화 필터링하는 함수
+ * 검색어 입력 시 호출되는 함수 (debounce 적용)
+ * @param {Event} e - input 이벤트 객체
  */
-function handleSearch(e) {
-	const searchWord = searchInput.value.trim().toLowerCase();
-	const filteredMovies = movieList.filter((movie) =>
-		movie.title.toLowerCase().includes(searchWord),
-	);
+function handleSearchInput(e) {
+	const searchWord = e.target.value.trim().toLowerCase();
+	const filteredMovies = filterMovies(searchWord);
 	renderMovies(filteredMovies);
 }
 
-// 모달 open off
-// 북마크
+/**
+ * 검색어로 영화 필터링하는 함수
+ * @param {string} searchWord - 검색어
+ * @returns {Array} - 필터링된 영화 목록
+ */
+function filterMovies(searchWord) {
+	return movieList.filter((movie) =>
+		movie.title.toLowerCase().includes(searchWord),
+	);
+}
+
+/**
+ * 검색창 비우기 버튼의 활성화 상태를 토글하는 함수
+ */
+function toggleResetButton(e, resetBtn) {
+	resetBtn.classList.toggle('hidden', !e.target.value.trim());
+}
+
+/**
+ * 검색창을 초기화하는 함수
+ */
+function resetSearch(e, $searchInput) {
+	$searchInput.value = '';
+	renderMovies([...movieList]);
+}
+
+async function handleCardClick(e, dialog, $modalPoster) {
+	const card = e.target.closest('.card-container');
+	const movieId = Number(card.dataset.id);
+	const movieDetail = await getMovieDetails(movieId);
+
+	renderDetailModal({ ...movieDetail });
+	// renderDetailModal({ ...detailData });
+	$modalPoster.addEventListener('load', () => {
+		dialog.showModal();
+	});
+}
+
+function getData(key) {
+	return JSON.parse(localStorage.getItem(key));
+}
+
+function setData(key, data) {
+	localStorage.setItem(key, JSON.stringify(data));
+}
+
+/**
+ *
+ * @param {number} id : 영화 ID
+ * @param {string} title : 영화 제목
+ * @param {string} overview : 줄거리
+ * @param {string} poster_path : 포스터 경로
+ * @param {{id, name}[]} genres : 장르 목록
+ * @param {string} release_date : 개봉일
+ * @param {number} vote_average : 평점
+ */
+function renderDetailModal({
+	id,
+	title,
+	overview,
+	poster_path,
+	genres,
+	release_date,
+	vote_average,
+}) {
+	const $modalContainer = document.querySelector('.modal-container');
+	const $modalPoster = $modalContainer.querySelector('.modal-img');
+	const $modalTitle = $modalContainer.querySelector('.modal-title');
+	const $modalOverview = $modalContainer.querySelector('.modal-overview');
+	const $modalReleaseField = $modalContainer.querySelector(
+		'.modal-release-field',
+	);
+	const $modalGenres = $modalContainer.querySelector('.modal-genres');
+	const $modalScoreField =
+		$modalContainer.querySelector('.modal-score-field');
+	const $star = $modalContainer.querySelector('.star');
+	const $starFill = $modalContainer.querySelector('.star-fill');
+
+	$modalContainer.dataset.id = id; // 모달창에 영화 ID 추가
+	$modalPoster.src = `https://image.tmdb.org/t/p/w300/${poster_path}`; // 포스터 업데이트
+	$modalPoster.alt = title;
+	$modalTitle.textContent = title;
+
+	$modalOverview.textContent = overview; // 줄거리 업데이트
+
+	$modalReleaseField.textContent = new Date(release_date).toLocaleDateString(
+		// 개봉일 업데이트
+		'ko-KR',
+		{
+			year: 'numeric', // 연도
+			month: 'long', // 월 (길게 표시, "1월"처럼 표시됨)
+			day: 'numeric', // 일
+		},
+	);
+
+	$modalGenres.innerHTML = ''; // 장르 업데이트
+	genres.forEach((genre) => {
+		const genreElement = document.createElement('div');
+		genreElement.classList.add('modal-genre');
+		genreElement.textContent = genre.name;
+		$modalGenres.appendChild(genreElement);
+	});
+
+	$modalScoreField.textContent = vote_average.toFixed(1); // 평점 업데이트
+
+	if (checkIsBookmarked(id)) {
+		$star.classList.add('hidden');
+		$starFill.classList.remove('hidden');
+	} else {
+		$star.classList.remove('hidden');
+		$starFill.classList.add('hidden');
+	}
+}
+
+/**
+ * 모달 닫기
+ * @param {Event} e - 클릭 이벤트 객체
+ * @param {Element} $dialog - 모달 엘리먼트
+ */
+function handleModalClose(e, $dialog) {
+	// e.stopPropagation(); => 이벤트 전파를 막는 메서드
+	$dialog.close();
+}

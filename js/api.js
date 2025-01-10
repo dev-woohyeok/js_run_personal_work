@@ -37,11 +37,11 @@ const fetchData = async (endpoint, options = {}) => {
  * @param {number} page : 페이지 번호, 기본값 1
  * @param {string} language : 언어, 기본값 'ko'
  * @param {string} region : 지역, 기본값 'KR'
- * @returns {Object[]} : 영화 목록l
+ * @returns {Object[]} : 영화 목록
  */
 export const getMovies = async (page = 1, language = 'ko', region = 'KR') => {
 	const endpoint = `/movie/popular?page=${page}&language=${language}&region=${region}`;
-	return fetchData(endpoint);
+	return fetchData(endpoint, { method: 'GET' });
 };
 
 /**
@@ -57,5 +57,5 @@ export const getMovieDetails = async (
 	region = 'KR',
 ) => {
 	const endpoint = `/movie/${movieId}?language=${language}&region=${region}`;
-	return fetchData(endpoint);
+	return fetchData(endpoint, { method: 'GET' });
 };

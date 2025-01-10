@@ -13,6 +13,7 @@
 	grid-template-rows: 335px 1fr;
 	width: 100%; /* 부모 요소의 너비에 맞추기 */
 	max-width: 300px; /* 최대 너비를 300px로 설정 */
+	height: 500px;
 	cursor: pointer;
 	border-radius: 10px;
 	color: black;
@@ -64,7 +65,7 @@
 	display: flex;
 	justify-content: left;
 	align-items: center;
-	font-size: 1rem;
+	font-size: 1.2rem;
 	font-weight: bold;
 }
 

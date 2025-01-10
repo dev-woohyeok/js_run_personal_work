@@ -1,0 +1,100 @@
+::backdrop {
+	background-color: black;
+	opacity: 0.4;
+}
+
+.modal-background {
+	border: none;
+	border-radius: 10px;
+	padding: 1rem;
+	box-shadow: -10px -10px 30px 4px rgba(0, 0, 0, 0.1),
+		10px 10px 30px 4px rgba(45, 78, 255, 0.15);
+}
+
+.modal-container {
+	display: grid;
+	grid-template-rows: 500px 1fr;
+	width: 800px;
+}
+
+.modal-img {
+	object-fit: fill;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	width: 100%;
+	height: 100%;
+}
+
+.modal-body {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 1rem;
+}
+
+.modal-title {
+	font-size: 2.5rem;
+	font-weight: bolder;
+}
+
+.modal-overview {
+	font-size: 1rem;
+}
+
+.modal-release {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+}
+
+.modal-release-field {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.modal-score {
+	display: flex;
+	justify-content: left;
+	align-items: center;
+}
+
+.modal-score-field {
+	margin-left: 5px;
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.modal-genres {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.modal-genre {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid var(--border-color);
+	background-color: var(--genre-color);
+	padding: 0.2rem 0.5rem;
+	border-radius: 25px;
+	color: white;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.modal-btn-bookmark {
+	position: absolute;
+	border: none;
+	cursor: pointer;
+	background-color: var(---button-main-background);
+	width: 35px;
+	height: 35px;
+	transform: translate(0, 25%);
+	right: 10px;
+}
+
+.modal-btn-bookmark:focus {
+	outline: none;
+}
