@@ -13,8 +13,8 @@ async function init() {
 		const movies = await getMovies();
 		movieList = movies.results;
 
-		// 영화 목록 렌더링
-		renderMovies([...movieList]);
+		// 북마크 모드 여부 확인
+		renderBookmarkList(checkModeBookmark());
 	} catch (error) {
 		console.error(error);
 	}
@@ -45,7 +45,9 @@ async function init() {
 		}
 
 		if (e.target.matches('.nav-bookmark')) {
-			renderBookmarkList(e); // 북마크 목록 랜더링
+			const isModeBookmark = checkModeBookmark();
+			renderBookmarkList(!isModeBookmark); // 북마크 목록 랜더링
+			setData('mode', !isModeBookmark); // 북마크 모드
 		}
 	});
 
@@ -79,14 +81,25 @@ function handleBookmark($dialog, $star, $starFill) {
 	const isBookmarked = checkIsBookmarked(id);
 	updateBookmarkData(isBookmarked, id);
 	renderBookmark(!isBookmarked, $star, $starFill);
+
+	if (checkModeBookmark()) {
+		const bookmarks = getData('bookmarks');
+		const filteredMovies = movieList.filter((movie) =>
+			bookmarks.includes(String(movie.id)),
+		);
+		renderMovies([...filteredMovies]);
+	}
 }
+
 function updateBookmarkData(isBookmarked, id) {
-	if (isBookmarked)
+	if (isBookmarked) {
 		setData(
 			'bookmarks',
 			getData('bookmarks').filter((item) => Number(item) !== Number(id)),
 		);
-	else setData('bookmarks', [...getData('bookmarks'), id]);
+	} else {
+		setData('bookmarks', [...getData('bookmarks'), id]);
+	}
 }
 
 function renderBookmark(isBookmarked, $star, $starFill) {
@@ -99,17 +112,29 @@ function renderBookmark(isBookmarked, $star, $starFill) {
 	}
 }
 
+function checkModeBookmark() {
+	return getData('mode', false);
+}
+
 function checkIsBookmarked(id) {
 	const data = getData('bookmarks') || [];
 	return data.some((item) => Number(item) === Number(id));
 }
 
-function renderBookmarkList(e) {
+function renderBookmarkList(isModeBookmark) {
+	const $navBookmark = document.querySelector('.nav-bookmark');
 	const bookmarks = getData('bookmarks');
-	const filteredMovies = movieList.filter((movie) =>
-		bookmarks.includes(String(movie.id)),
-	);
-	renderMovies([...filteredMovies]);
+
+	if (isModeBookmark) {
+		$navBookmark.textContent = '북마크 끄기';
+		const filteredMovies = movieList.filter((movie) =>
+			bookmarks.includes(String(movie.id)),
+		);
+		renderMovies([...filteredMovies]);
+	} else {
+		$navBookmark.textContent = '북마크 보기';
+		renderMovies([...movieList]);
+	}
 }
 
 /**
@@ -242,7 +267,7 @@ function toggleResetButton(e, resetBtn) {
  */
 function resetSearch(e, $searchInput) {
 	$searchInput.value = '';
-	$searchInput.dispatchEvent(new Event('input', { bubbles: false }));
+	$searchInput.dispatchEvent(new Event('input', { bubbles: true }));
 	renderMovies([...movieList]);
 }
 
@@ -257,8 +282,8 @@ async function handleCardClick(e, dialog, $modalPoster) {
 	});
 }
 
-function getData(key) {
-	return JSON.parse(localStorage.getItem(key)) || [];
+function getData(key, defaultValue = []) {
+	return JSON.parse(localStorage.getItem(key)) || defaultValue;
 }
 
 function setData(key, data) {
