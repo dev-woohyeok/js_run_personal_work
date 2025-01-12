@@ -451,9 +451,10 @@ async function init() {
 	const $starFill = document.querySelector('.star-fill');
 
 	// 검색 기능
+	const debouncedSearchInput = debounce((e) => handleSearchInput(e), 500);
 	$header.addEventListener('input', (e) => {
 		if (e.target.matches('#search-input')) {
-			debounce(handleSearchInput(e), 300);
+			debouncedSearchInput(e);
 			toggleResetButton(e, $resetBtn);
 		}
 	});
@@ -461,6 +462,10 @@ async function init() {
 	$header.addEventListener('click', (e) => {
 		if (e.target.closest('.search-reset')) {
 			resetSearch(e, $searchInput);
+		}
+
+		if (e.target.matches('.nav-bookmark')) {
+			renderBookmarkList(e);
 		}
 	});
 
@@ -492,46 +497,39 @@ async function init() {
 function handleBookmark($dialog, $star, $starFill) {
 	const id = $dialog.querySelector('.modal-container').dataset.id;
 	const isBookmarked = checkIsBookmarked(id);
-	updateBookmarkData(isBookmarked);
-	renderBookmark($star, $starFill, isBookmarked);
+	updateBookmarkData(isBookmarked, id);
+	renderBookmark(!isBookmarked, $star, $starFill);
 }
-
-/**
- * 북마크 상태를 업데이트하는 함수
- * @param {boolean} isBookmarked - 북마크 상태
- */
-function updateBookmarkData(isBookmarked) {
-	if (isBookmarked) {
-		// 북마크 제거
+function updateBookmarkData(isBookmarked, id) {
+	if (isBookmarked)
 		setData(
 			'bookmarks',
-			getData('bookmarks').filter((item) => item !== id),
+			getData('bookmarks').filter((item) => Number(item) !== Number(id)),
 		);
-	} else {
-		// 북마크 추가
-		setData('bookmarks', [...getData('bookmarks'), id]);
-	}
+	else setData('bookmarks', [...getData('bookmarks'), id]);
 }
 
-/**
- * 북마크 상태에 따라 UI를 업데이트하는 함수
- * @param {Element} $star - 별표 비어있는 상태
- * @param {Element} $starFill - 별표 채워진 상태
- * @param {boolean} isBookmarked - 북마크 상태
- */
-function renderBookmark($star, $starFill, isBookmarked) {
+function renderBookmark(isBookmarked, $star, $starFill) {
 	if (isBookmarked) {
-		$star.classList.remove('hidden');
-		$starFill.classList.add('hidden');
-	} else {
 		$star.classList.add('hidden');
 		$starFill.classList.remove('hidden');
+	} else {
+		$star.classList.remove('hidden');
+		$starFill.classList.add('hidden');
 	}
 }
 
 function checkIsBookmarked(id) {
-	const data = getData('bookmarks');
-	return data.some((item) => item === id);
+	const data = getData('bookmarks') || [];
+	return data.some((item) => Number(item) === Number(id));
+}
+
+function renderBookmarkList(e) {
+	const bookmarks = getData('bookmarks');
+	const filteredMovies = movieList.filter((movie) =>
+		bookmarks.includes(String(movie.id)),
+	);
+	renderMovies([...filteredMovies]);
 }
 
 /**
@@ -580,13 +578,13 @@ function createCardElement({
 
 	// 장르 엘리먼트 생성
 	const genresElement = createGenresElement(genre_ids);
-
+	console.log(title.length);
 	cardContainer.innerHTML = `
         <img class="card-img" src="https://image.tmdb.org/t/p/w300/${poster_path}" alt="${title}">
         <div class="card-body">
-            <div class="card-title style="font-size : ${
-				title.length > 10 ? '1rem' : 'inherit'
-			}">${title}</div>
+            <div class="card-title" ${
+				title.length > 10 ? 'style ="font-size: 1.1rem;"' : ''
+			}>${title}</div>
             <div class="card-genres">${genresElement}</div>
             <div class="card-score">
                 평점 : <span class="card-score-field">${vote_average.toFixed(
@@ -637,6 +635,7 @@ function createGenresElement(genreIds) {
  * @param {Event} e - input 이벤트 객체
  */
 function handleSearchInput(e) {
+	console.log('🚀 ~ file: home.js:638 ~ handleSearchInput ~ e:', e);
 	const searchWord = e.target.value.trim().toLowerCase();
 	const filteredMovies = filterMovies(searchWord);
 	renderMovies(filteredMovies);
@@ -681,7 +680,7 @@ async function handleCardClick(e, dialog, $modalPoster) {
 }
 
 function getData(key) {
-	return JSON.parse(localStorage.getItem(key));
+	return JSON.parse(localStorage.getItem(key)) || [];
 }
 
 function setData(key, data) {
@@ -747,13 +746,8 @@ function renderDetailModal({
 
 	$modalScoreField.textContent = vote_average.toFixed(1); // 평점 업데이트
 
-	if (checkIsBookmarked(id)) {
-		$star.classList.add('hidden');
-		$starFill.classList.remove('hidden');
-	} else {
-		$star.classList.remove('hidden');
-		$starFill.classList.add('hidden');
-	}
+	const isBookmarked = checkIsBookmarked(id);
+	renderBookmark(isBookmarked, $star, $starFill);
 }
 
 /**
