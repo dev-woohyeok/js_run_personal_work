@@ -250,9 +250,7 @@ function handleSearchInput(e) {
  * @returns {Array} - 필터링된 영화 목록
  */
 function filterMovies(searchWord) {
-	return movieList.filter((movie) =>
-		movie.title.toLowerCase().includes(searchWord),
-	);
+	return movieList.filter((movie) => !Hangul.search(movie.title, searchWord));
 }
 
 /**
