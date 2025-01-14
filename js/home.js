@@ -1,7 +1,7 @@
-import { getMovieDetails, getMovies } from './api.js';
+import { fetchMovieDetails, fetchMovieList } from './api.js';
 import { debounce } from './common.js';
+import { StorageManager } from './storage.js';
 
-let movieList = [];
 init();
 
 /**
@@ -10,152 +10,148 @@ init();
 async function init() {
 	// API를 통해 인기 영화 목록 가져오기
 	try {
-		const movies = await getMovies();
-		movieList = movies.results;
+		const movies = await fetchMovieList();
+		const movieList = movies.results.map((data) => ({
+			id: data.id,
+			title: data.title,
+			vote_average: data.vote_average,
+			poster_path: data.poster_path,
+			genre_ids: data.genre_ids,
+			bookmarked: StorageManager.checkIsBookmarked(data.id), // 로컬스토리지에서 확인
+		}));
 
-		// 북마크 모드 여부 확인
-		renderBookmarkList(checkModeBookmark());
+		renderHeader();
+		renderMovieList([...movieList]);
+		bindEvents([...movieList]);
 	} catch (error) {
-		console.error(error);
+		console.error('에러 발생 : ', error);
 	}
+}
 
-	const $header = document.querySelector('header');
-	const $cardsContainer = document.querySelector('.cards-container');
-	const $dialog = document.querySelector('.modal-background');
-
-	const $searchInput = document.querySelector('.search-input');
-	const $resetBtn = document.querySelector('.search-reset');
-	const $modalPoster = document.querySelector('.modal-img');
-	const $star = document.querySelector('.star');
-	const $starFill = document.querySelector('.star-fill');
+function bindEvents(movieList) {
+	const header = document.querySelector('header');
+	const cardContainer = document.querySelector('.cards-container');
+	const dialog = document.querySelector('.modal-background');
 
 	// 검색 기능
-	const debouncedSearchInput = debounce((e) => handleSearchInput(e), 500);
-	$header.addEventListener('input', (e) => {
+	const debouncedSearchInput = debounce(
+		(e) => handleSearchInput(e, movieList),
+		500,
+	);
+	header.addEventListener('input', (e) => {
 		if (e.target.matches('#search-input')) {
-			debouncedSearchInput(e); // 검색어 입력시 검색 기능
-			toggleResetButton(e, $resetBtn); // 검색창 비우기 버튼 활성화
+			debouncedSearchInput(e);
+			renderResetBtn();
 		}
 	});
 
 	// 검색창 초기화 및 북마크 기능
-	$header.addEventListener('click', (e) => {
+	header.addEventListener('click', (e) => {
 		if (e.target.closest('.search-reset')) {
-			resetSearch(e, $searchInput); // 검색창 비우기
+			handleClickResetBtn(e, [...movieList]);
 		}
 
 		if (e.target.matches('.nav-bookmark')) {
-			const isModeBookmark = checkModeBookmark();
-			renderBookmarkList(!isModeBookmark); // 북마크 목록 랜더링
-			setData('mode', !isModeBookmark); // 북마크 모드
+			handleClickNavBookmark(e, [...movieList]);
 		}
 	});
 
 	// 영화 카드 클릭 시 상세 정보 모달 렌더링
-	$cardsContainer.addEventListener('click', (e) => {
+	cardContainer.addEventListener('click', (e) => {
 		if (e.target.closest('.card-container')) {
-			handleCardClick(e, $dialog, $modalPoster);
+			handleClickCard(e);
 		}
 	});
 
 	// 모달 관련 이벤트
-	$dialog.addEventListener('click', (e) => {
+	dialog.addEventListener('click', (e) => {
 		if (e.target.matches('.modal-background')) {
-			handleModalClose(e, $dialog); // 모달창 배경 클릭 시 모달창 닫기
+			dialog.close();
 		}
 
-		if (e.target.closest('.modal-btn-bookmark')) {
-			handleBookmark($dialog, $star, $starFill); // 북마크 버튼 클릭 시 북마크 추가)
+		if (e.target.closest('.modal-container')) {
+			handleClickBookmark(e, movieList);
 		}
 	});
 }
 
-/**
- *
- * @param {Element} $dialog
- * @param {Element} $star
- * @param {Element} $starFill
- */
-function handleBookmark($dialog, $star, $starFill) {
-	const id = $dialog.querySelector('.modal-container').dataset.id;
-	const isBookmarked = checkIsBookmarked(id);
-	updateBookmarkData(isBookmarked, id);
-	renderBookmark(!isBookmarked, $star, $starFill);
-
-	if (checkModeBookmark()) {
-		const bookmarks = getData('bookmarks');
-		const filteredMovies = movieList.filter((movie) =>
-			bookmarks.includes(String(movie.id)),
-		);
-		renderMovies([...filteredMovies]);
-	}
+function renderResetBtn() {
+	const resetBtn = document.querySelector('.search-reset');
+	const searchInput = document.querySelector('.search-input');
+	searchInput.value.trim().length > 0
+		? resetBtn.classList.remove('hidden')
+		: resetBtn.classList.add('hidden');
 }
 
-function updateBookmarkData(isBookmarked, id) {
+function handleClickResetBtn(e, movieList) {
+	const searchInput = document.querySelector('.search-input');
+	searchInput.value = '';
+	renderResetBtn();
+	renderMovieList([...movieList]);
+}
+
+function handleClickNavBookmark(e, movieList) {
+	StorageManager.setData('mode', !StorageManager.checkBookmarkMode());
+	renderHeader();
+	renderMovieList([...movieList]);
+}
+
+function handleClickBookmark(e, movieList) {
+	const id = e.target.closest('.modal-container').dataset.id;
+	StorageManager.checkIsBookmarked(id)
+		? StorageManager.removeBookMark(id)
+		: StorageManager.setBookmark(id);
+	renderBookMark(id);
+	renderMovieList([...movieList]);
+}
+
+function renderHeader() {
+	const navBookmark = document.querySelector('.nav-bookmark');
+	StorageManager.checkBookmarkMode()
+		? (navBookmark.textContent = '북마크 끄기')
+		: (navBookmark.textContent = '북마크 보기');
+}
+
+function renderBookMark(id) {
+	const isBookmarked = StorageManager.checkIsBookmarked(id);
+	const star = document.querySelector('.star');
+	const starFill = document.querySelector('.star-fill');
+
 	if (isBookmarked) {
-		setData(
-			'bookmarks',
-			getData('bookmarks').filter((item) => Number(item) !== Number(id)),
-		);
+		star.classList.add('hidden');
+		starFill.classList.remove('hidden');
 	} else {
-		setData('bookmarks', [...getData('bookmarks'), id]);
-	}
-}
-
-function renderBookmark(isBookmarked, $star, $starFill) {
-	if (isBookmarked) {
-		$star.classList.add('hidden');
-		$starFill.classList.remove('hidden');
-	} else {
-		$star.classList.remove('hidden');
-		$starFill.classList.add('hidden');
-	}
-}
-
-function checkModeBookmark() {
-	return getData('mode', false);
-}
-
-function checkIsBookmarked(id) {
-	const data = getData('bookmarks') || [];
-	return data.some((item) => Number(item) === Number(id));
-}
-
-function renderBookmarkList(isModeBookmark) {
-	const $navBookmark = document.querySelector('.nav-bookmark');
-	const bookmarks = getData('bookmarks');
-
-	if (isModeBookmark) {
-		$navBookmark.textContent = '북마크 끄기';
-		const filteredMovies = movieList.filter((movie) =>
-			bookmarks.includes(String(movie.id)),
-		);
-		renderMovies([...filteredMovies]);
-	} else {
-		$navBookmark.textContent = '북마크 보기';
-		renderMovies([...movieList]);
+		star.classList.remove('hidden');
+		starFill.classList.add('hidden');
 	}
 }
 
 /**
  * 영화 목록을 렌더링하는 함수
- * @param {Array} movies 영화 데이터 배열
+ * @param {Array} movieList 영화 데이터 배열
  */
-function renderMovies(movies) {
+function renderMovieList(movieList) {
 	const cardsContainer = document.querySelector('.cards-container');
+	const isBookmarked = StorageManager.checkBookmarkMode();
+
+	const filteredMovies = isBookmarked
+		? movieList.filter((movie) =>
+				StorageManager.checkIsBookmarked(movie.id),
+		  )
+		: movieList;
 
 	// 기존 카드 초기화
 	cardsContainer.innerHTML = '';
 
 	// 검색 결과가 없는 경우 처리
-	if (movies.length === 0) {
+	if (filteredMovies.length === 0) {
 		cardsContainer.innerHTML =
 			'<div class="no-results">검색 결과를 찾을 수 없습니다.😅</div>';
 		return;
 	}
 
 	// 영화 데이터로 카드 생성
-	movies.forEach((movie) => {
+	filteredMovies.forEach((movie) => {
 		const card = createCardElement({ ...movie });
 		cardsContainer.appendChild(card);
 	});
@@ -237,55 +233,27 @@ function createGenresElement(genreIds) {
 /**
  * 검색어 입력 시 호출되는 함수 (debounce 적용)
  * @param {Event} e - input 이벤트 객체
+ * @param {object[]} movieList - 전체 영화 목록
  */
-function handleSearchInput(e) {
+function handleSearchInput(e, movieList) {
 	const searchWord = e.target.value.trim().toLowerCase();
-	const filteredMovies = filterMovies(searchWord);
-	renderMovies(filteredMovies);
+	const filteredMovies = movieList.filter(
+		(movie) => !Hangul.search(movie.title, searchWord),
+	);
+	renderMovieList(filteredMovies);
 }
 
-/**
- * 검색어로 영화 필터링하는 함수
- * @param {string} searchWord - 검색어
- * @returns {Array} - 필터링된 영화 목록
- */
-function filterMovies(searchWord) {
-	return movieList.filter((movie) => !Hangul.search(movie.title, searchWord));
-}
-
-/**
- * 검색창 비우기 버튼의 활성화 상태를 토글하는 함수
- */
-function toggleResetButton(e, resetBtn) {
-	resetBtn.classList.toggle('hidden', !e.target.value.trim());
-}
-
-/**
- * 검색창을 초기화하는 함수
- */
-function resetSearch(e, $searchInput) {
-	$searchInput.value = '';
-	$searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-	renderMovies([...movieList]);
-}
-
-async function handleCardClick(e, dialog, $modalPoster) {
+async function handleClickCard(e) {
 	const card = e.target.closest('.card-container');
 	const movieId = Number(card.dataset.id);
-	const movieDetail = await getMovieDetails(movieId);
-
+	const movieDetail = await fetchMovieDetails(movieId);
 	renderDetailModal({ ...movieDetail });
-	$modalPoster.addEventListener('load', () => {
+
+	const dialog = document.querySelector('.modal-background');
+	const modalPoster = document.querySelector('.modal-poster');
+	modalPoster.addEventListener('load', () => {
 		dialog.showModal();
 	});
-}
-
-function getData(key, defaultValue = []) {
-	return JSON.parse(localStorage.getItem(key)) || defaultValue;
-}
-
-function setData(key, data) {
-	localStorage.setItem(key, JSON.stringify(data));
 }
 
 /**
@@ -307,22 +275,19 @@ function renderDetailModal({
 	release_date,
 	vote_average,
 }) {
-	const $modalContainer = document.querySelector('.modal-container');
-	const $modalPoster = $modalContainer.querySelector('.modal-img');
-	const $modalTitle = $modalContainer.querySelector('.modal-title');
-	const $modalOverview = $modalContainer.querySelector('.modal-overview');
-	const $modalReleaseField = $modalContainer.querySelector(
+	const modalContainer = document.querySelector('.modal-container');
+	const modalPoster = modalContainer.querySelector('.modal-poster');
+	const $modalTitle = modalContainer.querySelector('.modal-title');
+	const $modalOverview = modalContainer.querySelector('.modal-overview');
+	const $modalReleaseField = modalContainer.querySelector(
 		'.modal-release-field',
 	);
-	const $modalGenres = $modalContainer.querySelector('.modal-genres');
-	const $modalScoreField =
-		$modalContainer.querySelector('.modal-score-field');
-	const $star = $modalContainer.querySelector('.star');
-	const $starFill = $modalContainer.querySelector('.star-fill');
+	const $modalGenres = modalContainer.querySelector('.modal-genres');
+	const $modalScoreField = modalContainer.querySelector('.modal-score-field');
 
-	$modalContainer.dataset.id = id; // 모달창에 영화 ID 추가
-	$modalPoster.src = `https://image.tmdb.org/t/p/w300/${poster_path}`; // 포스터 업데이트
-	$modalPoster.alt = title;
+	modalContainer.dataset.id = id; // 모달창에 영화 ID 추가
+	modalPoster.src = `https://image.tmdb.org/t/p/w300/${poster_path}`; // 포스터 업데이트
+	modalPoster.alt = title;
 	$modalTitle.textContent = title;
 
 	$modalOverview.textContent = overview; // 줄거리 업데이트
@@ -346,17 +311,5 @@ function renderDetailModal({
 	});
 
 	$modalScoreField.textContent = vote_average.toFixed(1); // 평점 업데이트
-
-	const isBookmarked = checkIsBookmarked(id);
-	renderBookmark(isBookmarked, $star, $starFill);
-}
-
-/**
- * 모달 닫기
- * @param {Event} e - 클릭 이벤트 객체
- * @param {Element} $dialog - 모달 엘리먼트
- */
-function handleModalClose(e, $dialog) {
-	// e.stopPropagation(); => 이벤트 전파를 막는 메서드
-	$dialog.close();
+	renderBookMark(id);
 }
