@@ -21,6 +21,9 @@ async function init() {
 	}
 }
 
+/**
+ * 헤더 영역을 랜더링 하는 함수
+ */
 function renderHeader() {
 	const navBookmark = document.querySelector('.nav-bookmark');
 	BookmarkManager.checkBookmarkMode()
@@ -59,6 +62,10 @@ function renderMovieList(movieList) {
 	});
 }
 
+/**
+ * 이벤트를 바인딩하는 함수
+ * @param {object[]} movieList
+ */
 function bindEvents(movieList) {
 	const header = document.querySelector('header');
 	const cardContainer = document.querySelector('.cards-container');
@@ -66,7 +73,7 @@ function bindEvents(movieList) {
 
 	// 검색 기능
 	const debouncedSearchInput = debounce(
-		(e) => handleSearchInput(e, movieList),
+		(e) => handleSearchInput(e, [...movieList]),
 		500,
 	);
 
@@ -120,6 +127,9 @@ function handleSearchInput(e, movieList) {
 	renderMovieList(filteredMovies);
 }
 
+/**
+ * 검색어 입력 시 검색어 초기화 버튼 렌더링 함수
+ */
 function renderResetBtn() {
 	const resetBtn = document.querySelector('.search-reset');
 	const searchInput = document.querySelector('.search-input');
@@ -128,6 +138,11 @@ function renderResetBtn() {
 		: resetBtn.classList.add('hidden');
 }
 
+/**
+ * 검색어 초기화 버튼 클릭 시 호출되는 함수
+ * @param {Event} e - click 이벤트 객체
+ * @param {object[]} movieList - 전체 영화 목록
+ */
 function handleClickResetBtn(e, movieList) {
 	const searchInput = document.querySelector('.search-input');
 	searchInput.value = '';
@@ -135,12 +150,22 @@ function handleClickResetBtn(e, movieList) {
 	renderMovieList([...movieList]);
 }
 
+/**
+ * 북마크 모드 전환 함수
+ * @param {Event} e - click 이벤트 객체
+ * @param {object[]} movieList - 전체 영화 목록
+ */
 function handleClickNavBookmark(e, movieList) {
 	BookmarkManager.setData('mode', !BookmarkManager.checkBookmarkMode());
 	renderHeader();
 	renderMovieList([...movieList]);
 }
 
+/**
+ * 북마크 추가/삭제 함수
+ * @param {Event} e - click 이벤트 객체
+ * @param {object[]} movieList - 전체 영화 목록
+ */
 function handleClickBookmark(e, movieList) {
 	const id = e.target.closest('.modal-container').dataset.id;
 	BookmarkManager.checkIsBookmarked(id)
@@ -150,6 +175,10 @@ function handleClickBookmark(e, movieList) {
 	renderMovieList([...movieList]);
 }
 
+/**
+ * 북마크 버튼을 렌더링 함수
+ * @param {number} id - 영화 ID
+ */
 function renderBookMark(id) {
 	const isBookmarked = BookmarkManager.checkIsBookmarked(id);
 	const star = document.querySelector('.star');

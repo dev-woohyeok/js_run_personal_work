@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.themoviedb.org/3';
+const BASE_URL = 'https://api.themoviedb.org';
 const API_TOKEN =
 	'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzRjMTViMGU2M2QxYmI1YTU4MDA1OGI5NTc4ZWQxMyIsIm5iZiI6MTczNjI5NjcxOS4xNTY5OTk4LCJzdWIiOiI2NzdkYzkwZjg5ZmM1ZDk0NDI0ZTU4NDAiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.IXSWaWU2xIAfuwT5Su0a1dmI9QFkDDg6ASelxRdEgYc';
 
@@ -9,13 +9,19 @@ const DEFAULT_HEADERS = {
 
 /**
  *
- * @param {string} endpoint : API 엔드포인트
+ * @param {string} pathname - 예) '/movie/popular'
+ * @param {object} queryParams - 예) { page: 1, language: 'ko', region: 'KR' }
  * @param {object} options : fetch API 추가할 옵션들
  * @returns
  */
-const fetchData = async (endpoint, options = {}) => {
+const fetchData = async (pathname, queryParams, options = {}) => {
 	try {
-		const response = await fetch(`${BASE_URL}${endpoint}`, {
+		const url = new URL(pathname, BASE_URL);
+		Object.entries(queryParams).forEach(([key, value]) => {
+			url.searchParams.append(key, value);
+		});
+
+		const response = await fetch(url.toString(), {
 			...options,
 			headers: {
 				...DEFAULT_HEADERS,
@@ -44,8 +50,11 @@ export const fetchMovieList = async (
 	language = 'ko',
 	region = 'KR',
 ) => {
-	const endpoint = `/movie/popular?page=${page}&language=${language}&region=${region}`;
-	return fetchData(endpoint, { method: 'GET' });
+	return fetchData(
+		'/3/movie/popular?',
+		{ page, language, region },
+		{ method: 'GET' },
+	);
 };
 
 /**
@@ -60,6 +69,9 @@ export const fetchMovieDetails = async (
 	language = 'ko',
 	region = 'KR',
 ) => {
-	const endpoint = `/movie/${movieId}?language=${language}&region=${region}`;
-	return fetchData(endpoint, { method: 'GET' });
+	return fetchData(
+		`/3/movie/${movieId}?`,
+		{ language, region },
+		{ method: 'GET' },
+	);
 };
