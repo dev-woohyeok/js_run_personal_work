@@ -38,25 +38,30 @@ function renderHeader() {
 function renderMovieList(movieList) {
 	const cardsContainer = document.querySelector('.cards-container');
 	const isBookmarked = BookmarkManager.checkBookmarkMode();
+	const searchWords = document.querySelector('.search-input').value.trim();
 
-	const filteredMovies = isBookmarked
-		? movieList.filter((movie) =>
+	const searchMovies = movieList.filter(
+		(movie) => !Hangul.search(movie.title, searchWords),
+	);
+
+	const bookMarkedMovies = isBookmarked
+		? searchMovies.filter((movie) =>
 				BookmarkManager.checkIsBookmarked(movie.id),
 		  )
-		: movieList;
+		: searchMovies;
 
 	// 기존 카드 초기화
 	cardsContainer.innerHTML = '';
 
 	// 검색 결과가 없는 경우 처리
-	if (filteredMovies.length === 0) {
+	if (bookMarkedMovies.length === 0) {
 		cardsContainer.innerHTML =
 			'<div class="no-results">검색 결과를 찾을 수 없습니다.😅</div>';
 		return;
 	}
 
 	// 영화 데이터로 카드 생성
-	filteredMovies.forEach((movie) => {
+	bookMarkedMovies.forEach((movie) => {
 		const card = createCardElement({ ...movie });
 		cardsContainer.appendChild(card);
 	});
@@ -73,7 +78,7 @@ function bindEvents(movieList) {
 
 	// 검색 기능
 	const debouncedSearchInput = debounce(
-		(e) => handleSearchInput(e, [...movieList]),
+		(e) => renderMovieList([...movieList]),
 		500,
 	);
 
@@ -112,19 +117,6 @@ function bindEvents(movieList) {
 			handleClickBookmark(e, movieList);
 		}
 	});
-}
-
-/**
- * 검색어 입력 시 호출되는 함수 (debounce 적용)
- * @param {Event} e - input 이벤트 객체
- * @param {object[]} movieList - 전체 영화 목록
- */
-function handleSearchInput(e, movieList) {
-	const searchWord = e.target.value.trim().toLowerCase();
-	const filteredMovies = movieList.filter(
-		(movie) => !Hangul.search(movie.title, searchWord),
-	);
-	renderMovieList(filteredMovies);
 }
 
 /**
