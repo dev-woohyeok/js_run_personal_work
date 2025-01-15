@@ -1,6 +1,6 @@
 import { fetchMovieDetails, fetchMovieList } from './api.js';
 import { debounce } from './common.js';
-import { StorageManager } from './storage.js';
+import { BookmarkManager } from './storage.js';
 
 init();
 
@@ -11,14 +11,7 @@ async function init() {
 	// API를 통해 인기 영화 목록 가져오기
 	try {
 		const movies = await fetchMovieList();
-		const movieList = movies.results.map((data) => ({
-			id: data.id,
-			title: data.title,
-			vote_average: data.vote_average,
-			poster_path: data.poster_path,
-			genre_ids: data.genre_ids,
-			bookmarked: StorageManager.checkIsBookmarked(data.id), // 로컬스토리지에서 확인
-		}));
+		const movieList = [...movies.results];
 
 		renderHeader();
 		renderMovieList([...movieList]);
@@ -38,6 +31,7 @@ function bindEvents(movieList) {
 		(e) => handleSearchInput(e, movieList),
 		500,
 	);
+
 	header.addEventListener('input', (e) => {
 		if (e.target.matches('#search-input')) {
 			debouncedSearchInput(e);
@@ -91,29 +85,29 @@ function handleClickResetBtn(e, movieList) {
 }
 
 function handleClickNavBookmark(e, movieList) {
-	StorageManager.setData('mode', !StorageManager.checkBookmarkMode());
+	BookmarkManager.setData('mode', !BookmarkManager.checkBookmarkMode());
 	renderHeader();
 	renderMovieList([...movieList]);
 }
 
 function handleClickBookmark(e, movieList) {
 	const id = e.target.closest('.modal-container').dataset.id;
-	StorageManager.checkIsBookmarked(id)
-		? StorageManager.removeBookMark(id)
-		: StorageManager.setBookmark(id);
+	BookmarkManager.checkIsBookmarked(id)
+		? BookmarkManager.removeBookMark(id)
+		: BookmarkManager.setBookmark(id);
 	renderBookMark(id);
 	renderMovieList([...movieList]);
 }
 
 function renderHeader() {
 	const navBookmark = document.querySelector('.nav-bookmark');
-	StorageManager.checkBookmarkMode()
+	BookmarkManager.checkBookmarkMode()
 		? (navBookmark.textContent = '북마크 끄기')
 		: (navBookmark.textContent = '북마크 보기');
 }
 
 function renderBookMark(id) {
-	const isBookmarked = StorageManager.checkIsBookmarked(id);
+	const isBookmarked = BookmarkManager.checkIsBookmarked(id);
 	const star = document.querySelector('.star');
 	const starFill = document.querySelector('.star-fill');
 
@@ -132,11 +126,11 @@ function renderBookMark(id) {
  */
 function renderMovieList(movieList) {
 	const cardsContainer = document.querySelector('.cards-container');
-	const isBookmarked = StorageManager.checkBookmarkMode();
+	const isBookmarked = BookmarkManager.checkBookmarkMode();
 
 	const filteredMovies = isBookmarked
 		? movieList.filter((movie) =>
-				StorageManager.checkIsBookmarked(movie.id),
+				BookmarkManager.checkIsBookmarked(movie.id),
 		  )
 		: movieList;
 
@@ -271,28 +265,29 @@ function renderDetailModal({
 	title,
 	overview,
 	poster_path,
+	backdrop_path,
 	genres,
 	release_date,
 	vote_average,
 }) {
 	const modalContainer = document.querySelector('.modal-container');
 	const modalPoster = modalContainer.querySelector('.modal-poster');
-	const $modalTitle = modalContainer.querySelector('.modal-title');
-	const $modalOverview = modalContainer.querySelector('.modal-overview');
-	const $modalReleaseField = modalContainer.querySelector(
+	const modalTitle = modalContainer.querySelector('.modal-title');
+	const modalOverview = modalContainer.querySelector('.modal-overview');
+	const modalReleaseField = modalContainer.querySelector(
 		'.modal-release-field',
 	);
 	const $modalGenres = modalContainer.querySelector('.modal-genres');
 	const $modalScoreField = modalContainer.querySelector('.modal-score-field');
 
 	modalContainer.dataset.id = id; // 모달창에 영화 ID 추가
-	modalPoster.src = `https://image.tmdb.org/t/p/w300/${poster_path}`; // 포스터 업데이트
+	modalPoster.src = `https://image.tmdb.org/t/p/w1280/${backdrop_path}`; // 포스터 업데이트
 	modalPoster.alt = title;
-	$modalTitle.textContent = title;
+	modalTitle.textContent = title;
 
-	$modalOverview.textContent = overview; // 줄거리 업데이트
+	modalOverview.textContent = overview; // 줄거리 업데이트
 
-	$modalReleaseField.textContent = new Date(release_date).toLocaleDateString(
+	modalReleaseField.textContent = new Date(release_date).toLocaleDateString(
 		// 개봉일 업데이트
 		'ko-KR',
 		{

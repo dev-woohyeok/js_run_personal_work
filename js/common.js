@@ -1,11 +1,9 @@
-export function debounce(func, delay) {
+export const debounce = function (func, delay = 300) {
 	let timer;
-	return function () {
-		let context = this;
-		let args = arguments;
-		clearTimeout(timer);
+	return function (...args) {
+		if (timer) clearTimeout(timer);
 		timer = setTimeout(() => {
-			func.apply(context, args);
+			func(...args);
 		}, delay);
 	};
-}
+};

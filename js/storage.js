@@ -1,6 +1,4 @@
 export class StorageManager {
-	constructor() {}
-
 	static getData(key, defaultValue) {
 		return JSON.parse(localStorage.getItem(key)) || defaultValue;
 	}
@@ -8,7 +6,9 @@ export class StorageManager {
 	static setData(key, value) {
 		localStorage.setItem(key, JSON.stringify(value));
 	}
+}
 
+export class BookmarkManager extends StorageManager {
 	static removeBookMark(id) {
 		const result = this.getData('bookmarks', []).filter(
 			(movie) => movie != id,

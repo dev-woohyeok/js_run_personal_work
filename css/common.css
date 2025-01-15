@@ -10,6 +10,7 @@
 	--hearder-background: white;
 	--search-background: white;
 	--genre-color: #8c8c8c;
+	--modal-text: white;
 }
 
 .hidden {
@@ -54,6 +55,11 @@ body {
 	display: grid;
 	grid-template-rows: 100px 1fr 0;
 	grid-template-columns: 1fr;
+	margin: 0;
+}
+
+h1,
+p {
 	margin: 0;
 }
 

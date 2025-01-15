@@ -1,23 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="image/">
+    <link rel="apple-touch-icon" sizes="60x60" href="image/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="image/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="image/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="image/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="image/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="image/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="image/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="image/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="image/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="image/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="image/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="image/favicon-16x16.png">
+    <link rel="manifest" href="image/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="image/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
     <link rel="stylesheet" href="/css/home.css">
     <script src="https://unpkg.com/hangul-js" type="text/javascript"></script>
     <script src="/js/home.js" type="module"></script>
-    <title>Document</title>
+    <title>Runner's Pedia</title>
 </head>
 
 <body>
     <header>
-        <img class="logo" src="/image/logo.png" alt="">
-        <!-- 검색 컨테이너 -->
+        <img class="logo" src="/image/logo.png" alt="logo">
         <div class="header-wrapper">
             <section class="search-container">
-                <div class="search-field">
-                    <input id="search-input" class="search-input" type="text" placeholder="영화를 검색하세요" maxlength="50">
+                <form role="search" class="search-field">
+                    <input id="search-input" class="search-input" type="text" placeholder="영화를 검색하세요" maxlength="50"
+                        autocomplete="off">
                     <div class="search-icon">
                         <svg fill="#000000" viewBox="0 0 24 24" id="search" data-name="Line Color"
                             xmlns="http://www.w3.org/2000/svg" class="icon line-color">
@@ -35,9 +54,8 @@
                                 d="M128,20.00012a108,108,0,1,0,108,108A108.12217,108.12217,0,0,0,128,20.00012Zm0,192a84,84,0,1,1,84-84A84.0953,84.0953,0,0,1,128,212.00012Zm40.48535-107.51465L144.9707,128.00012l23.51465,23.51465a12.0001,12.0001,0,0,1-16.9707,16.9707L128,144.97082l-23.51465,23.51465a12.0001,12.0001,0,0,1-16.9707-16.9707l23.51465-23.51465L87.51465,104.48547a12.0001,12.0001,0,0,1,16.9707-16.9707L128,111.02942l23.51465-23.51465a12.0001,12.0001,0,0,1,16.9707,16.9707Z" />
                         </svg>
                     </button>
-                </div>
+                </form>
             </section>
-            <!-- 네비바 -->
             <nav>
                 <ul>
                     <li><button class="nav-bookmark" type="button">북마크 보기</button></li>
@@ -50,17 +68,17 @@
     </main>
     <footer></footer>
     <dialog class="modal-background">
-        <div class=" modal-container">
+        <article class=" modal-container">
             <img class="modal-poster" src="" alt="">
             <div class="modal-body">
-                <div class="modal-title"></div>
-                <div class="modal-overview"></div>
-                <div class="modal-release">
+                <h1 class="modal-title"></h1>
+                <p class="modal-overview"></p>
+                <p class="modal-release">
                     개봉일 : <span class="modal-release-field"></span>
-                </div>
-                <div class="modal-score">
+                </p>
+                <p class="modal-score">
                     평점 : <span class="modal-score-field"></span>
-                </div>
+                </p>
                 <div class="modal-genres">
                     <div class="modal-genres">
                     </div>
@@ -81,7 +99,7 @@
                     </svg>
                 </button>
             </div>
-        </div>
+        </article>
     </dialog>
 </body>
 
