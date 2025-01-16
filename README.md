@@ -23,9 +23,9 @@ TMDB Open API를 활용한 영화 소개 웹 사이트입니다.
 <br/>
 
 ## 🚀 트러블 슈팅
-- ####[ 한글 검색 기능 최적화 ](https://aboard-particle-0d4.notion.site/JS-17dee001a71580e7b8e4e0e182618752?pvs=4)
-- ####[ 북마크 on/off 시 검색 기능이 동작하지 않는 문제 해결 ] (https://aboard-particle-0d4.notion.site/JS-on-off-17cee001a71580de8303c7f7afd53a93?pvs=4)
-- ####[ debounce 검색 기능이 동작하지 않는 문제 해결] (https://aboard-particle-0d4.notion.site/JS-debounce-179ee001a715804ca377e96f2f828ee6?pvs=4)
+#### [ 한글 검색 기능 최적화 ](https://aboard-particle-0d4.notion.site/JS-17dee001a71580e7b8e4e0e182618752?pvs=4)
+#### [ 북마크 on/off 시 검색 기능이 동작하지 않는 문제 해결 ] (https://aboard-particle-0d4.notion.site/JS-on-off-17cee001a71580de8303c7f7afd53a93?pvs=4)
+#### [ debounce 검색 기능이 동작하지 않는 문제 해결] (https://aboard-particle-0d4.notion.site/JS-debounce-179ee001a715804ca377e96f2f828ee6?pvs=4)
 
 <br/>
 
