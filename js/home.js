@@ -89,6 +89,12 @@ function bindEvents(movieList) {
 		}
 	});
 
+	header.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter') {
+			e.preventDefault(); // 엔터 중복동작 방지
+		}
+	});
+
 	// 검색창 초기화 및 북마크 기능
 	header.addEventListener('click', (e) => {
 		if (e.target.closest('.search-reset')) {
