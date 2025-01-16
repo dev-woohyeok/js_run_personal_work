@@ -75,6 +75,7 @@ function bindEvents(movieList) {
 	const header = document.querySelector('header');
 	const cardContainer = document.querySelector('.cards-container');
 	const dialog = document.querySelector('.modal-background');
+	const modalPoster = dialog.querySelector('.modal-poster');
 
 	// 검색 기능
 	const debouncedSearchInput = debounce(
@@ -122,6 +123,11 @@ function bindEvents(movieList) {
 		if (e.target.closest('.modal-container')) {
 			handleClickBookmark(e, movieList);
 		}
+	});
+
+	// 모달 이미지 로드 후 모달창 띄우기
+	modalPoster.addEventListener('load', () => {
+		dialog.showModal();
 	});
 }
 
@@ -269,12 +275,6 @@ async function handleClickCard(e) {
 	const movieId = Number(card.dataset.id);
 	const movieDetail = await fetchMovieDetails(movieId);
 	renderDetailModal({ ...movieDetail });
-
-	const dialog = document.querySelector('.modal-background');
-	const modalPoster = document.querySelector('.modal-poster');
-	modalPoster.addEventListener('load', () => {
-		dialog.showModal();
-	});
 }
 
 /**
@@ -291,7 +291,6 @@ function renderDetailModal({
 	id,
 	title,
 	overview,
-	poster_path,
 	backdrop_path,
 	genres,
 	release_date,
@@ -304,8 +303,8 @@ function renderDetailModal({
 	const modalReleaseField = modalContainer.querySelector(
 		'.modal-release-field',
 	);
-	const $modalGenres = modalContainer.querySelector('.modal-genres');
-	const $modalScoreField = modalContainer.querySelector('.modal-score-field');
+	const modalGenres = modalContainer.querySelector('.modal-genres');
+	const modalScoreField = modalContainer.querySelector('.modal-score-field');
 
 	modalContainer.dataset.id = id; // 모달창에 영화 ID 추가
 	modalPoster.src = `https://image.tmdb.org/t/p/w1280/${backdrop_path}`; // 포스터 업데이트
@@ -324,14 +323,14 @@ function renderDetailModal({
 		},
 	);
 
-	$modalGenres.innerHTML = ''; // 장르 업데이트
+	modalGenres.innerHTML = ''; // 장르 업데이트
 	genres.forEach((genre) => {
 		const genreElement = document.createElement('div');
 		genreElement.classList.add('modal-genre');
 		genreElement.textContent = genre.name;
-		$modalGenres.appendChild(genreElement);
+		modalGenres.appendChild(genreElement);
 	});
 
-	$modalScoreField.textContent = vote_average.toFixed(1); // 평점 업데이트
+	modalScoreField.textContent = vote_average.toFixed(1); // 평점 업데이트
 	renderBookMark(id);
 }
