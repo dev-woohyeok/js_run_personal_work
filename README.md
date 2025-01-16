@@ -4,9 +4,9 @@
 
 ## 📝 프로젝트 소개
 <div>
+  <img src="https://img.shields.io/badge/HTML5-%23-orange" alt="HTML">
+  <img src="https://img.shields.io/badge/CSS3-%23-blue" alt="CSS">
   <img src="https://img.shields.io/badge/JavaScript-ES6%2B-yellow" alt="JavaScript">
-  <img src="https://img.shields.io/badge/HTML-%HTML5-orange" alt="HTML">
-  <img src="https://img.shields.io/badge/CSS-%CSS3-blue" alt="CSS">
 </div>
 TMDB Open API를 활용한 영화 소개 웹 사이트입니다.
 
