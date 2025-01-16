@@ -19,16 +19,14 @@ TMDB Open API를 활용한 영화 소개 웹 사이트입니다.
 -   영화 제목 기반 검색에서 **debounce**와 **hangul-js**를 적용하여 성능 최적화를 했습니다.
 -   **localStorage**를 이용하여 사용자에게 북마크 기능을 구현했습니다.
 
-### 기술 스택
-<div>
-<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='javascript' src='https://img.shields.io/badge/Javascript-100000?style=flat&logo=javascript&logoColor=FFEB39&labelColor=000000&color=4F4F4F'/></a>
-</div>
-
 <br/>
 
 ## 🚀 트러블 슈팅
+
 #### [ 한글 검색 기능 최적화 ](https://aboard-particle-0d4.notion.site/JS-17dee001a71580e7b8e4e0e182618752?pvs=4)
+
 #### [ 북마크 on/off 시 검색 기능이 동작하지 않는 문제 해결 ](https://aboard-particle-0d4.notion.site/JS-on-off-17cee001a71580de8303c7f7afd53a93?pvs=4)
+
 #### [ debounce 검색 기능이 동작하지 않는 문제 해결](https://aboard-particle-0d4.notion.site/JS-debounce-179ee001a715804ca377e96f2f828ee6?pvs=4)
 
 <br/>
