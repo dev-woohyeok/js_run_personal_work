@@ -17,9 +17,7 @@ TMDB Open API를 활용한 영화 소개 웹 사이트입니다.
 
 ### 기술 스택
 <div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/JavaScript.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/HTML5.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/CSS3.png?raw=true" width="80">
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='javascript' src='https://img.shields.io/badge/Javascript-100000?style=flat&logo=javascript&logoColor=FFEB39&labelColor=000000&color=4F4F4F'/></a>
 </div>
 
 <br/>
