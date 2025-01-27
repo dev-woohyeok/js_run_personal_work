@@ -1,6 +1,5 @@
 const BASE_URL = 'https://api.themoviedb.org';
-const API_TOKEN =
-	'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmNzRjMTViMGU2M2QxYmI1YTU4MDA1OGI5NTc4ZWQxMyIsIm5iZiI6MTczNjI5NjcxOS4xNTY5OTk4LCJzdWIiOiI2NzdkYzkwZjg5ZmM1ZDk0NDI0ZTU4NDAiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.IXSWaWU2xIAfuwT5Su0a1dmI9QFkDDg6ASelxRdEgYc';
+const API_TOKEN ='토큰을 안전상의 이유로 제거하여, 실행이 불가능합니다.'
 
 const DEFAULT_HEADERS = {
 	accept: 'application/json',
