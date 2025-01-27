@@ -9,6 +9,7 @@
 TMDB Open API를 활용한 영화 소개 웹 사이트입니다.
 
 ![Image](https://github.com/user-attachments/assets/a175763d-e96d-4c1c-ac55-cbafd9dddc4d)
+
 <br/>
 <br/>
 
